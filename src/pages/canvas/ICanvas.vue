@@ -1,11 +1,28 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+import getMousePosition from "./getMousePosition";
+
+const dragCanvas = ref<HTMLDivElement | null>(null);
+
+onMounted(() => {
+  dragCanvas.value?.addEventListener("mouseenter", () => {
+    console.log("enter");
+  });
+  dragCanvas.value?.addEventListener("mouseleave", () => {
+    console.log("leave");
+  });
+  dragCanvas.value?.addEventListener("mousemove", (event) => {
+    const offsetProps = getMousePosition(event);
+  });
+});
+</script>
 
 <template>
-  <div class="cirdrag-canvas"></div>
+  <div class="circledrag-canvas" ref="dragCanvas"></div>
 </template>
 
 <style scoped>
-.cirdrag-canvas {
+.circledrag-canvas {
   flex: 1;
   height: 100%;
   overflow: hidden;
