@@ -2,6 +2,7 @@
 import ViewController from "./pages/ViewController.vue";
 import CompController from "./pages/CompController.vue";
 import DataController from "./pages/DataController.vue";
+import ElementHolder from "./components/ElementHolder.vue";
 
 const projectConfig = {
   name: "circle-dragger",
@@ -11,7 +12,11 @@ document.title = projectConfig.name;
 
 <template>
   <div class="controller">
-    <CompController></CompController>
+    <CompController>
+      <ElementHolder compName="EditText"></ElementHolder>
+      <ElementHolder compName="EditText"></ElementHolder>
+      <ElementHolder compName="EditText"></ElementHolder>
+    </CompController>
     <ViewController></ViewController>
     <DataController></DataController>
   </div>
