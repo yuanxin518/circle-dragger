@@ -23,9 +23,7 @@ onMounted(() => {
 
 <style scoped>
 .circledrag-canvas {
-  flex: 1;
+  width: 100%;
   height: 100%;
-  overflow: hidden;
-  background-color: #f0f0f0;
 }
 </style>

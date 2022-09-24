@@ -19,6 +19,7 @@ document.title = projectConfig.name;
 
 <style scoped>
 .controller {
+  overflow: hidden;
   display: flex;
   flex-direction: row;
   height: 100%;
