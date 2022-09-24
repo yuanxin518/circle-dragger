@@ -2,7 +2,6 @@
 import ViewController from "./pages/ViewController.vue";
 import CompController from "./pages/CompController.vue";
 import DataController from "./pages/DataController.vue";
-import ElementHolder from "./components/ElementHolder.vue";
 
 const projectConfig = {
   name: "circle-dragger",
