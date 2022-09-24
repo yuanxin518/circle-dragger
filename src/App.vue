@@ -12,11 +12,7 @@ document.title = projectConfig.name;
 
 <template>
   <div class="controller">
-    <CompController>
-      <ElementHolder compName="EditText"></ElementHolder>
-      <ElementHolder compName="EditText"></ElementHolder>
-      <ElementHolder compName="EditText"></ElementHolder>
-    </CompController>
+    <CompController> </CompController>
     <ViewController></ViewController>
     <DataController></DataController>
   </div>
