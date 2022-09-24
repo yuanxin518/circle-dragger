@@ -1,26 +1,20 @@
 <script lang="ts" setup>
-import { defineAsyncComponent } from "vue";
-
 type IElementHolder = {
   compName: string;
 };
 const props = withDefaults(defineProps<IElementHolder>(), {
   compName: "",
 });
-// const CurrentComponent = defineAsyncComponent(
-//   () => import(`./drag-elements/${props.compName}.vue`)
-// );
 </script>
 <template>
   <div class="element_holder">
     <div class="holder_content">{{ props.compName }}</div>
-    <!-- <CurrentComponent></CurrentComponent> -->
   </div>
 </template>
 
 <style scoped>
 .element_holder {
-  aspect-ratio: 1/1;
+  height: 80px;
   padding: 4px;
 }
 .holder_content {
