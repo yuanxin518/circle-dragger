@@ -2,9 +2,21 @@
 import ICanvas from "../pages/canvas/ICanvas.vue";
 import RowRuler from "./canvas/RowRuler.vue";
 import ColumnRuler from "./canvas/ColumnRuler.vue";
+import { onMounted, ref } from "vue";
+import { setSize } from "./canvas/handlerRuler";
+
+const view = ref<HTMLDivElement>();
+onMounted(() => {
+  if (!view.value) return;
+  setSize(view.value.offsetWidth, view.value.offsetHeight);
+  window.addEventListener("resize", () => {
+    if (!view.value) return;
+    setSize(view.value.offsetWidth, view.value.offsetHeight);
+  });
+});
 </script>
 <template>
-  <div class="view">
+  <div class="view" ref="view">
     <div class="view_ruler">
       <RowRuler></RowRuler>
       <ColumnRuler></ColumnRuler>
@@ -31,7 +43,8 @@ import ColumnRuler from "./canvas/ColumnRuler.vue";
   width: 100%;
   height: 100%;
   background-color: #f0f0f0;
-  border-radius: 8px;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 20px 0px;
 }
 .view_ruler {
   width: 100%;

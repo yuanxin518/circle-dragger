@@ -1,8 +1,19 @@
 import type { CSSProperties } from "vue";
 
-export const customStyle = (type: "row" | "column"): CSSProperties => {
+export const getCustomStyle = (type: "row" | "column"): CSSProperties => {
   return {
-    "background-color": "#000",
-    opacity: "0.8",
+    "background-color": "#eeeeee",
+  };
+};
+
+export const getRulerStyle = () => {
+  return {
+    markColor: "#7d8694",
+    shortMarkWidth: 8,
+    longMarkWidth: 12,
+    //小刻度间隔
+    markSpacing: 10,
+    // 大刻度的间隔
+    highlightSpacing: 100,
   };
 };
