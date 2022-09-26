@@ -3,15 +3,15 @@ import ICanvas from "../pages/canvas/ICanvas.vue";
 import RowRuler from "./canvas/RowRuler.vue";
 import ColumnRuler from "./canvas/ColumnRuler.vue";
 import { onMounted, ref } from "vue";
-import { setSize } from "./canvas/handlerRuler";
+import { setRulerSize } from "./canvas/handlerRuler";
 
 const view = ref<HTMLDivElement>();
 onMounted(() => {
   if (!view.value) return;
-  setSize(view.value.offsetWidth, view.value.offsetHeight);
+  setRulerSize(view.value.offsetWidth, view.value.offsetHeight);
   window.addEventListener("resize", () => {
     if (!view.value) return;
-    setSize(view.value.offsetWidth, view.value.offsetHeight);
+    setRulerSize(view.value.offsetWidth, view.value.offsetHeight);
   });
 });
 </script>

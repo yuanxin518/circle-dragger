@@ -9,7 +9,7 @@ export const getCustomStyle = (type: "row" | "column"): CSSProperties => {
 export const getRulerStyle = () => {
   return {
     markColor: "#7d8694",
-    shortMarkWidth: 8,
+    shortMarkWidth: 6,
     longMarkWidth: 12,
     //小刻度间隔
     markSpacing: 10,

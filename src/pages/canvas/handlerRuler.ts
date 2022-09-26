@@ -5,6 +5,7 @@ let COLUMN_RULER: HTMLCanvasElement | null = null;
 let rowContext: CanvasRenderingContext2D | null;
 let columnContext: CanvasRenderingContext2D | null;
 
+const isResize = [false, false];
 const VIEWCONTROLLER_SIZE = {
   width: 2000,
   height: 2000,
@@ -42,8 +43,36 @@ export const initRulerMark = (
 ) => {
   rowContext = rRuler.getContext("2d");
   columnContext = cRuler.getContext("2d");
+
+  [
+    rowContext as CanvasRenderingContext2D,
+    columnContext as CanvasRenderingContext2D,
+  ].forEach((item) => {
+    if (!item) return;
+    item.font = "20px";
+  });
+
   setRulerMark();
 };
+
+//绘制文字
+function strokeText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  isRow: boolean
+) {
+  if (!isRow) {
+    context.save();
+    context.translate(x, y);
+    context.rotate((90 * Math.PI) / 180);
+    context.fillText(text, 0, 5);
+    context.restore();
+  } else {
+    context.fillText(text, x, y);
+  }
+}
 
 /**
  * 绘制ruler的刻度
@@ -56,28 +85,48 @@ const setRulerMark = () => {
     markSpacing,
     highlightSpacing,
   } = rulerStyle;
-  rowContext!.strokeStyle = markColor;
-  columnContext!.strokeStyle = markColor;
+  if (!rowContext || !columnContext) return;
+  rowContext.strokeStyle = markColor;
+  columnContext.strokeStyle = markColor;
 
-  for (let i = 0; i < VIEWCONTROLLER_SIZE.width; i++) {
-    if (i % markSpacing === 0) {
-      rowContext?.moveTo(i, 0);
-      rowContext?.lineTo(i, shortMarkWidth);
-      if (i % highlightSpacing === 0) {
-        rowContext?.lineTo(i, longMarkWidth);
+  clearCanvas();
+
+  if (isResize[0]) {
+    for (let i = 0; i < VIEWCONTROLLER_SIZE.width; i++) {
+      if (rowContext && i % markSpacing === 0) {
+        rowContext.moveTo(i, 0);
+        rowContext.lineTo(i, shortMarkWidth);
+        if (i % highlightSpacing === 0) {
+          rowContext.lineTo(i, longMarkWidth);
+          strokeText(rowContext, i.toString(), i + 5, longMarkWidth + 5, true);
+        }
+
+        rowContext?.stroke();
       }
-      rowContext?.stroke();
     }
+    changeResizeStatus("width", "off");
   }
-  for (let i = 0; i < VIEWCONTROLLER_SIZE.height; i++) {
-    if (i % markSpacing === 0) {
-      columnContext?.moveTo(0, i);
-      columnContext?.lineTo(shortMarkWidth, i);
-      if (i % highlightSpacing === 0) {
-        columnContext?.lineTo(longMarkWidth, i);
+
+  if (isResize[1]) {
+    for (let i = 0; i < VIEWCONTROLLER_SIZE.height; i++) {
+      if (columnContext && i % markSpacing === 0) {
+        columnContext?.moveTo(0, i);
+        columnContext?.lineTo(shortMarkWidth, i);
+        if (i % highlightSpacing === 0) {
+          columnContext?.lineTo(longMarkWidth, i);
+
+          strokeText(
+            columnContext,
+            i.toString(),
+            longMarkWidth + 5,
+            i + 5,
+            false
+          );
+        }
+        columnContext?.stroke();
       }
-      columnContext?.stroke();
     }
+    changeResizeStatus("height", "off");
   }
 };
 
@@ -86,7 +135,10 @@ const setRulerMark = () => {
  * @param width
  * @param height
  */
-export const setSize = (width: number, height: number) => {
+export const setRulerSize = (width: number, height: number) => {
+  if (width !== VIEWCONTROLLER_SIZE.width) changeResizeStatus("width", "on");
+  if (height !== VIEWCONTROLLER_SIZE.height) changeResizeStatus("height", "on");
+
   if (VIEWCONTROLLER_SIZE.width !== width) {
     VIEWCONTROLLER_SIZE.width = width;
     if (ROW_RULER) {
@@ -100,4 +152,32 @@ export const setSize = (width: number, height: number) => {
     }
   }
   setRulerMark();
+};
+
+const clearCanvas = () => {
+  if (isResize[0]) {
+    rowContext?.clearRect(
+      0,
+      0,
+      VIEWCONTROLLER_SIZE.width,
+      VIEWCONTROLLER_SIZE.height
+    );
+  }
+  if (isResize[1]) {
+    columnContext?.clearRect(
+      0,
+      0,
+      VIEWCONTROLLER_SIZE.width,
+      VIEWCONTROLLER_SIZE.height
+    );
+  }
+};
+
+const changeResizeStatus = (type: "width" | "height", status: "on" | "off") => {
+  if (type === "width") {
+    isResize[0] = status === "on";
+  }
+  if (type === "height") {
+    isResize[1] = status === "on";
+  }
 };
