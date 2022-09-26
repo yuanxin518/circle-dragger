@@ -110,10 +110,10 @@ const setRulerMark = () => {
   if (isResize[1]) {
     for (let i = 0; i < VIEWCONTROLLER_SIZE.height; i++) {
       if (columnContext && i % markSpacing === 0) {
-        columnContext?.moveTo(0, i);
-        columnContext?.lineTo(shortMarkWidth, i);
+        columnContext.moveTo(0, i);
+        columnContext.lineTo(shortMarkWidth, i);
         if (i % highlightSpacing === 0) {
-          columnContext?.lineTo(longMarkWidth, i);
+          columnContext.lineTo(longMarkWidth, i);
 
           strokeText(
             columnContext,
@@ -123,7 +123,7 @@ const setRulerMark = () => {
             false
           );
         }
-        columnContext?.stroke();
+        columnContext.stroke();
       }
     }
     changeResizeStatus("height", "off");
