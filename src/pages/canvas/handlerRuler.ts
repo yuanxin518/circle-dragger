@@ -11,7 +11,16 @@ const VIEWCONTROLLER_SIZE = {
   height: 2000,
 };
 
-const rulerStyle = getRulerStyle();
+const {
+  markColor,
+  shortMarkWidth,
+  longMarkWidth,
+  markSpacing,
+  highlightSpacing,
+  font,
+  fontColor,
+} = getRulerStyle();
+
 /**
  * 初始化ruler
  * @param rowRuler
@@ -44,14 +53,6 @@ export const initRulerMark = (
   rowContext = rRuler.getContext("2d");
   columnContext = cRuler.getContext("2d");
 
-  [
-    rowContext as CanvasRenderingContext2D,
-    columnContext as CanvasRenderingContext2D,
-  ].forEach((item) => {
-    if (!item) return;
-    item.font = "20px";
-  });
-
   setRulerMark();
 };
 
@@ -63,6 +64,8 @@ function strokeText(
   y: number,
   isRow: boolean
 ) {
+  context.font = font;
+  context.fillStyle = fontColor;
   if (!isRow) {
     context.save();
     context.translate(x, y);
@@ -78,13 +81,6 @@ function strokeText(
  * 绘制ruler的刻度
  */
 const setRulerMark = () => {
-  const {
-    markColor,
-    shortMarkWidth,
-    longMarkWidth,
-    markSpacing,
-    highlightSpacing,
-  } = rulerStyle;
   if (!rowContext || !columnContext) return;
   rowContext.strokeStyle = markColor;
   columnContext.strokeStyle = markColor;
@@ -101,7 +97,7 @@ const setRulerMark = () => {
           strokeText(rowContext, i.toString(), i + 5, longMarkWidth + 5, true);
         }
 
-        rowContext?.stroke();
+        rowContext.stroke();
       }
     }
     changeResizeStatus("width", "off");
@@ -149,6 +145,7 @@ export const setRulerSize = (width: number, height: number) => {
     VIEWCONTROLLER_SIZE.height = height;
     if (COLUMN_RULER) {
       COLUMN_RULER.height = height;
+      COLUMN_RULER.width = VIEWCONTROLLER_SIZE.width;
     }
   }
   setRulerMark();
