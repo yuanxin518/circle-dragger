@@ -1,11 +1,6 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
-import { getCustomStyle } from "./getRulerStyle";
+import { onMounted, ref } from "vue";
 import { initRuler } from "./handlerRuler";
-
-const style = computed(() => {
-  return getCustomStyle("row");
-});
 const rowRuler = ref();
 
 onMounted(() => {
@@ -15,7 +10,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="row_container" :style="style">
+  <div class="row_container">
     <canvas ref="rowRuler" class="row_ruler" height="20"></canvas>
   </div>
 </template>

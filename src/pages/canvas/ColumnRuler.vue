@@ -1,12 +1,8 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
-import { getCustomStyle } from "./getRulerStyle";
 import { initRuler } from "./handlerRuler";
 
 const columnRuler = ref();
-const style = computed(() => {
-  return getCustomStyle("column");
-});
 
 onMounted(() => {
   if (columnRuler.value) {
@@ -15,7 +11,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="column_container" :style="style">
+  <div class="column_container">
     <canvas ref="columnRuler" class="column_ruler"></canvas>
   </div>
 </template>

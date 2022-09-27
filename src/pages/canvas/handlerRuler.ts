@@ -19,6 +19,8 @@ const {
   highlightSpacing,
   font,
   fontColor,
+  backgroundColor,
+  rulerWidth,
 } = getRulerStyle();
 
 /**
@@ -76,6 +78,19 @@ function strokeText(
     context.fillText(text, x, y);
   }
 }
+/**
+ * 填充颜色
+ * @param context
+ */
+function fillColor(
+  rowContext: CanvasRenderingContext2D,
+  columnContext: CanvasRenderingContext2D
+) {
+  rowContext.fillStyle = backgroundColor;
+  columnContext.fillStyle = backgroundColor;
+  rowContext.fillRect(0, 0, VIEWCONTROLLER_SIZE.width, rulerWidth);
+  columnContext.fillRect(0, 0, rulerWidth, VIEWCONTROLLER_SIZE.height);
+}
 
 /**
  * 绘制ruler的刻度
@@ -86,6 +101,7 @@ const setRulerMark = () => {
   columnContext.strokeStyle = markColor;
 
   clearCanvas();
+  fillColor(rowContext, columnContext);
 
   if (isResize[0]) {
     for (let i = 0; i < VIEWCONTROLLER_SIZE.width; i++) {

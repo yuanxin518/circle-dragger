@@ -17,11 +17,11 @@ onMounted(() => {
 </script>
 <template>
   <div class="view">
+    <div class="view_ruler">
+      <RowRuler></RowRuler>
+      <ColumnRuler></ColumnRuler>
+    </div>
     <div class="view_controller" ref="view">
-      <div class="view_ruler">
-        <RowRuler></RowRuler>
-        <ColumnRuler></ColumnRuler>
-      </div>
       <div class="inner_controller">
         <ICanvas></ICanvas>
       </div>
@@ -56,5 +56,10 @@ onMounted(() => {
   height: 100%;
   pointer-events: none;
   z-index: 3;
+}
+
+.view::-webkit-scrollbar {
+  width: 20px;
+  height: 8px;
 }
 </style>

@@ -1,11 +1,3 @@
-import type { CSSProperties } from "vue";
-
-export const getCustomStyle = (type: "row" | "column"): CSSProperties => {
-  return {
-    "background-color": "#eeeeee",
-  };
-};
-
 export const getRulerStyle = () => {
   return {
     markColor: "#7d8694",
@@ -17,5 +9,7 @@ export const getRulerStyle = () => {
     highlightSpacing: 100,
     font: "10px sans-serif",
     fontColor: "#7d8694",
+    backgroundColor: "#eeeeee",
+    rulerWidth: 20,
   };
 };
