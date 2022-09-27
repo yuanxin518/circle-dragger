@@ -22,9 +22,12 @@ onMounted(() => {
 .column_container {
   width: 20px;
   height: 100%;
+  position: sticky;
+  position: -webkit-sticky;
+  left: 0;
+  top: 0;
 }
 .column_ruler {
-  position: absolute;
   top: 0;
   left: 0;
 }

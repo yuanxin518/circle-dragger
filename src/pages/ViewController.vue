@@ -26,13 +26,17 @@ onMounted(() => {
 </script>
 <template>
   <div class="view" ref="view">
-    <div class="view_ruler">
-      <RowRuler></RowRuler>
-      <ColumnRuler></ColumnRuler>
-    </div>
-    <div class="view_controller" ref="viewController">
-      <div class="inner_controller">
-        <ICanvas></ICanvas>
+    <div class="container">
+      <div class="view_controller" ref="viewController">
+        <!-- //TODO: encapsulate rulersetting -->
+        <div class="view_ruler">
+          <span class="ruler_setting"></span>
+          <RowRuler></RowRuler>
+          <ColumnRuler></ColumnRuler>
+        </div>
+        <div class="inner_controller">
+          <ICanvas></ICanvas>
+        </div>
       </div>
     </div>
   </div>
@@ -41,7 +45,12 @@ onMounted(() => {
 <style scoped>
 .view {
   background-color: rgba(0, 0, 0, 0.2);
-  position: relative;
+  overflow: hidden;
+  transform: translateX(0);
+}
+.container {
+  height: 100%;
+  width: 100%;
   overflow: auto;
 }
 .view_controller {
@@ -65,6 +74,17 @@ onMounted(() => {
   height: 100%;
   pointer-events: none;
   z-index: 3;
+}
+
+.ruler_setting {
+  position: fixed;
+  z-index: 4;
+  left: 0;
+  top: 0;
+  display: block;
+  background-color: red;
+  width: 20px;
+  height: 20px;
 }
 
 .view::-webkit-scrollbar {

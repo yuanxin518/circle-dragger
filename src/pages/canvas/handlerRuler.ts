@@ -167,7 +167,7 @@ export const setRulerSize = (width: number, height: number) => {
     VIEWCONTROLLER_SIZE.height = height;
     if (COLUMN_RULER) {
       COLUMN_RULER.height = VIEWCONTROLLER_SIZE.height;
-      COLUMN_RULER.width = VIEWCONTROLLER_SIZE.width;
+      COLUMN_RULER.width = rulerWidth;
     }
   }
   setRulerMark();

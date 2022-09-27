@@ -23,9 +23,11 @@ onMounted(() => {
   margin-left: 20px;
   width: 100%;
   height: 20px;
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
 }
 .row_ruler {
-  position: absolute;
   left: 0;
   top: 0;
 }
