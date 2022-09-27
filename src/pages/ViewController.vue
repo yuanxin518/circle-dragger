@@ -5,23 +5,32 @@ import ColumnRuler from "./canvas/ColumnRuler.vue";
 import { onMounted, ref } from "vue";
 import { setRulerSize } from "./canvas/handlerRuler";
 
+const viewController = ref<HTMLDivElement>();
 const view = ref<HTMLDivElement>();
+
 onMounted(() => {
-  if (!view.value) return;
-  setRulerSize(view.value.offsetWidth, view.value.offsetHeight);
+  if (!viewController.value) return;
+  setRulerSize(
+    viewController.value.offsetWidth,
+    viewController.value.offsetHeight
+  );
+
   window.addEventListener("resize", () => {
-    if (!view.value) return;
-    setRulerSize(view.value.offsetWidth, view.value.offsetHeight);
+    if (!viewController.value) return;
+    setRulerSize(
+      viewController.value.offsetWidth,
+      viewController.value.offsetHeight
+    );
   });
 });
 </script>
 <template>
-  <div class="view">
+  <div class="view" ref="view">
     <div class="view_ruler">
       <RowRuler></RowRuler>
       <ColumnRuler></ColumnRuler>
     </div>
-    <div class="view_controller" ref="view">
+    <div class="view_controller" ref="viewController">
       <div class="inner_controller">
         <ICanvas></ICanvas>
       </div>

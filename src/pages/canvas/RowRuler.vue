@@ -3,6 +3,10 @@ import { onMounted, ref } from "vue";
 import { initRuler } from "./handlerRuler";
 const rowRuler = ref();
 
+withDefaults(defineProps<{ offset: number }>(), {
+  offset: 0,
+});
+
 onMounted(() => {
   if (rowRuler.value) {
     initRuler(rowRuler.value, null);

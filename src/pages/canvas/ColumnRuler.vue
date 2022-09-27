@@ -1,8 +1,11 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { initRuler } from "./handlerRuler";
 
 const columnRuler = ref();
+withDefaults(defineProps<{ offset: number }>(), {
+  offset: 0,
+});
 
 onMounted(() => {
   if (columnRuler.value) {

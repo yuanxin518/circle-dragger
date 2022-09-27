@@ -5,7 +5,7 @@ let COLUMN_RULER: HTMLCanvasElement | null = null;
 let rowContext: CanvasRenderingContext2D | null;
 let columnContext: CanvasRenderingContext2D | null;
 
-const isResize = [false, false];
+const isCache = [false, false];
 const VIEWCONTROLLER_SIZE = {
   width: 2000,
   height: 2000,
@@ -80,16 +80,21 @@ function strokeText(
 }
 /**
  * 填充颜色
- * @param context
+ * @param rowContext
+ * @param columnContext
  */
-function fillColor(
-  rowContext: CanvasRenderingContext2D,
-  columnContext: CanvasRenderingContext2D
+export function fillColor(
+  rowContext?: CanvasRenderingContext2D,
+  columnContext?: CanvasRenderingContext2D
 ) {
-  rowContext.fillStyle = backgroundColor;
-  columnContext.fillStyle = backgroundColor;
-  rowContext.fillRect(0, 0, VIEWCONTROLLER_SIZE.width, rulerWidth);
-  columnContext.fillRect(0, 0, rulerWidth, VIEWCONTROLLER_SIZE.height);
+  if (rowContext) {
+    rowContext.fillStyle = backgroundColor;
+    rowContext.fillRect(0, 0, VIEWCONTROLLER_SIZE.width, rulerWidth);
+  }
+  if (columnContext) {
+    columnContext.fillStyle = backgroundColor;
+    columnContext.fillRect(0, 0, rulerWidth, VIEWCONTROLLER_SIZE.height);
+  }
 }
 
 /**
@@ -101,9 +106,9 @@ const setRulerMark = () => {
   columnContext.strokeStyle = markColor;
 
   clearCanvas();
-  fillColor(rowContext, columnContext);
 
-  if (isResize[0]) {
+  if (isCache[0]) {
+    fillColor(rowContext, undefined);
     for (let i = 0; i < VIEWCONTROLLER_SIZE.width; i++) {
       if (rowContext && i % markSpacing === 0) {
         rowContext.moveTo(i, 0);
@@ -119,7 +124,8 @@ const setRulerMark = () => {
     changeResizeStatus("width", "off");
   }
 
-  if (isResize[1]) {
+  if (isCache[1]) {
+    fillColor(undefined, columnContext);
     for (let i = 0; i < VIEWCONTROLLER_SIZE.height; i++) {
       if (columnContext && i % markSpacing === 0) {
         columnContext.moveTo(0, i);
@@ -166,9 +172,13 @@ export const setRulerSize = (width: number, height: number) => {
   }
   setRulerMark();
 };
+export const setRulerTranslate = (type: "row" | "column", offset: number) => {
+  rowContext!.translate(offset, offset);
+  rowContext?.stroke();
+};
 
 const clearCanvas = () => {
-  if (isResize[0]) {
+  if (isCache[0]) {
     rowContext?.clearRect(
       0,
       0,
@@ -176,7 +186,7 @@ const clearCanvas = () => {
       VIEWCONTROLLER_SIZE.height
     );
   }
-  if (isResize[1]) {
+  if (isCache[1]) {
     columnContext?.clearRect(
       0,
       0,
@@ -188,9 +198,9 @@ const clearCanvas = () => {
 
 const changeResizeStatus = (type: "width" | "height", status: "on" | "off") => {
   if (type === "width") {
-    isResize[0] = status === "on";
+    isCache[0] = status === "on";
   }
   if (type === "height") {
-    isResize[1] = status === "on";
+    isCache[1] = status === "on";
   }
 };
