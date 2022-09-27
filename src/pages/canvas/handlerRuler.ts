@@ -160,13 +160,13 @@ export const setRulerSize = (width: number, height: number) => {
   if (VIEWCONTROLLER_SIZE.width !== width) {
     VIEWCONTROLLER_SIZE.width = width;
     if (ROW_RULER) {
-      ROW_RULER.width = width;
+      ROW_RULER.width = VIEWCONTROLLER_SIZE.width;
     }
   }
   if (VIEWCONTROLLER_SIZE.height !== height) {
     VIEWCONTROLLER_SIZE.height = height;
     if (COLUMN_RULER) {
-      COLUMN_RULER.height = height;
+      COLUMN_RULER.height = VIEWCONTROLLER_SIZE.height;
       COLUMN_RULER.width = VIEWCONTROLLER_SIZE.width;
     }
   }
