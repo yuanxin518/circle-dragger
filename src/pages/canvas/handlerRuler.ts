@@ -101,15 +101,16 @@ export function fillColor(
  * 绘制ruler的刻度
  */
 const setRulerMark = () => {
+  const offset = 66 - rulerWidth; //这里暂时魔法值代替
   if (!rowContext || !columnContext) return;
   rowContext.strokeStyle = markColor;
   columnContext.strokeStyle = markColor;
-
   clearCanvas();
 
   if (isCache[0]) {
     fillColor(rowContext, undefined);
-    for (let i = 0; i < VIEWCONTROLLER_SIZE.width; i++) {
+    rowContext.translate(offset, 0);
+    for (let i = -offset; i < VIEWCONTROLLER_SIZE.width; i++) {
       if (rowContext && i % markSpacing === 0) {
         rowContext.moveTo(i, 0);
         rowContext.lineTo(i, shortMarkWidth);
@@ -117,7 +118,6 @@ const setRulerMark = () => {
           rowContext.lineTo(i, longMarkWidth);
           strokeText(rowContext, i.toString(), i + 5, longMarkWidth + 5, true);
         }
-
         rowContext.stroke();
       }
     }
@@ -126,7 +126,9 @@ const setRulerMark = () => {
 
   if (isCache[1]) {
     fillColor(undefined, columnContext);
-    for (let i = 0; i < VIEWCONTROLLER_SIZE.height; i++) {
+    columnContext.translate(0, offset);
+
+    for (let i = -offset; i < VIEWCONTROLLER_SIZE.height; i++) {
       if (columnContext && i % markSpacing === 0) {
         columnContext.moveTo(0, i);
         columnContext.lineTo(shortMarkWidth, i);

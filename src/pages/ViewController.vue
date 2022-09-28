@@ -27,7 +27,11 @@ onMounted(() => {
 <template>
   <div class="view" ref="view">
     <div class="container">
-      <div class="view_controller" ref="viewController">
+      <div
+        class="view_controller"
+        ref="viewController"
+        :style="{ padding: 66 + 'px' }"
+      >
         <!-- //TODO: encapsulate rulersetting -->
         <div class="view_ruler">
           <span class="ruler_setting"></span>
@@ -56,7 +60,6 @@ onMounted(() => {
 .view_controller {
   width: 1920px;
   height: 1080px;
-  padding: 66px;
   box-sizing: content-box;
 }
 .inner_controller {
