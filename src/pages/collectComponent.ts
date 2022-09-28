@@ -11,7 +11,7 @@ const defineDragComp = (
   }
 ) => {
   if (compBucket.has(compName)) {
-    throw new Error(`there also exists a component named compName`);
+    throw new Error(`there also exists a component named` + compName);
   }
   compBucket.set(compName, comp);
 };
