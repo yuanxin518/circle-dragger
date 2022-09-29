@@ -19,7 +19,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="circledrag-canvas" ref="dragCanvas"></div>
+  <div class="circledrag-canvas" ref="dragCanvas">
+    <slot></slot>
+  </div>
 </template>
 
 <style scoped>
