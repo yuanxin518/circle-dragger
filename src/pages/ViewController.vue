@@ -4,6 +4,7 @@ import RowRuler from "./canvas/RowRuler.vue";
 import ColumnRuler from "./canvas/ColumnRuler.vue";
 import { onMounted, ref } from "vue";
 import { setRulerSize } from "./canvas/handlerRuler";
+import RenderedContainer from "../components/RenderedComponent/RenderedContainer.vue";
 
 const viewController = ref<HTMLDivElement>();
 const view = ref<HTMLDivElement>();
@@ -39,7 +40,9 @@ onMounted(() => {
           <ColumnRuler></ColumnRuler>
         </div>
         <div class="inner_controller">
-          <ICanvas></ICanvas>
+          <ICanvas>
+            <RenderedContainer></RenderedContainer>
+          </ICanvas>
         </div>
       </div>
     </div>

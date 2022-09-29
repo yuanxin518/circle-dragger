@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { renderComponent } from "@/pages/collectComponent";
+
 type IElementHolder = {
   compName: string;
 };
@@ -8,7 +10,9 @@ const props = withDefaults(defineProps<IElementHolder>(), {
 </script>
 <template>
   <div class="element_holder">
-    <div class="holder_content">{{ props.compName }}</div>
+    <div class="holder_content" @click="renderComponent(props.compName)">
+      {{ props.compName }}
+    </div>
   </div>
 </template>
 
