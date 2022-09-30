@@ -1,6 +1,14 @@
-import { ref, type CSSProperties } from "vue";
+import { reactive, ref, type CSSProperties } from "vue";
 
-export default () => {
+export const useComponentEventStates = (props: any) => {
+  return reactive({
+    isHover: false,
+  });
+};
+
+type State = ReturnType<typeof useComponentEventStates>;
+
+export const useRenderedComponent = (props: any, states: State) => {
   const containerStyle = ref<CSSProperties>();
   /**
    * 点击组件
@@ -8,6 +16,13 @@ export default () => {
    */
   const clickComponent = (event: MouseEvent) => {
     setStyleProperties(getMoveableStyle());
+  };
+
+  const mouseEnter = (event: MouseEvent) => {
+    states.isHover = true;
+  };
+  const mouseLeave = (event: MouseEvent) => {
+    states.isHover = false;
   };
 
   const setStyleProperties = (CSS: CSSProperties) => {
@@ -31,5 +46,7 @@ export default () => {
     containerStyle,
     clickComponent,
     getDefaultStyle,
+    mouseEnter,
+    mouseLeave,
   };
 };

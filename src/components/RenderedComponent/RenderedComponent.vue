@@ -1,19 +1,29 @@
 <script lang="ts" setup>
-import useComponentEvent from "./useComponentEvent";
-const { containerStyle, clickComponent } = useComponentEvent();
+import type { DragComp } from "@/pages/collectComponent";
+import { toRefs } from "vue";
+import {
+  useRenderedComponent,
+  useComponentEventStates,
+} from "./useRenderedComponent";
 
-withDefaults(
-  defineProps<{
-    componentConfig: any;
-  }>(),
-  {}
-);
+export type RenderedComponentProps = {
+  componentConfig: DragComp;
+};
+
+const props = withDefaults(defineProps<RenderedComponentProps>(), {});
+const states = useComponentEventStates(props);
+const { containerStyle, clickComponent, mouseEnter, mouseLeave } =
+  useRenderedComponent(props, states);
+
+const { isHover } = toRefs(states);
 </script>
 <template>
   <div
     class="rendered_container"
     :style="containerStyle"
-    @click="clickComponent($event)"
+    @click="clickComponent"
+    @mouseenter="mouseEnter"
+    @mouseleave="mouseLeave"
   >
     <div class="click_mask"></div>
     <component
