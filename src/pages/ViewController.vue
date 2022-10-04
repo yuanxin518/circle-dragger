@@ -33,7 +33,6 @@ onMounted(() => {
         ref="viewController"
         :style="{ padding: 66 + 'px' }"
       >
-        <!-- //TODO: encapsulate rulersetting -->
         <div class="view_ruler">
           <span class="ruler_setting"></span>
           <RowRuler></RowRuler>
