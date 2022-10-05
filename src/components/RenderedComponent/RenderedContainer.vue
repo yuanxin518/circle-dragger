@@ -8,12 +8,7 @@ import {
   useComponentEventStates,
 } from "./useRenderedComponent";
 
-export type RenderedComponentProps = {
-  componentConfig: DragComp;
-};
-
-const props = withDefaults(defineProps<RenderedComponentProps>(), {});
-const states = useComponentEventStates(props);
+const states = useComponentEventStates();
 const {
   containerStyle,
   maskStyle,
@@ -21,7 +16,7 @@ const {
   mouseEnter,
   mouseLeave,
   removeFocus,
-} = useRenderedComponent(props, states);
+} = useRenderedComponent(states);
 
 const { isHover, isChecked } = toRefs(states);
 
