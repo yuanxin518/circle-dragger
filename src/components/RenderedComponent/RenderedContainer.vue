@@ -35,7 +35,6 @@ onMounted(() => {
       class="rendered_container"
       v-for="(item, index) in (renderedComponents as DragComp[])"
       :key="index"
-      :componentConfig="item"
       :style="containerStyle"
       @click="clickComponent"
       @mouseenter="mouseEnter"
