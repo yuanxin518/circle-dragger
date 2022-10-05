@@ -14,14 +14,23 @@ export type RenderedComponentProps = {
 
 const props = withDefaults(defineProps<RenderedComponentProps>(), {});
 const states = useComponentEventStates(props);
-const { containerStyle, maskStyle, clickComponent, mouseEnter, mouseLeave } =
-  useRenderedComponent(props, states);
+const {
+  containerStyle,
+  maskStyle,
+  clickComponent,
+  mouseEnter,
+  mouseLeave,
+  removeFocus,
+} = useRenderedComponent(props, states);
 
-const { isHover } = toRefs(states);
+const { isHover, isChecked } = toRefs(states);
 
 onMounted(() => {
   window.addEventListener("click", (event) => {
-    console.log(event);
+    if (!isHover.value) {
+      isChecked.value = false;
+      removeFocus();
+    }
   });
 });
 </script>

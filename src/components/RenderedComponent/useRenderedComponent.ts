@@ -41,7 +41,7 @@ export const useRenderedComponent = (props: any, states: State) => {
   };
 
   const removeFocus = () => {
-    console.log(1);
+    maskStyle.value = {};
   };
 
   /**
