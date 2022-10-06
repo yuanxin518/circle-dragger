@@ -36,6 +36,7 @@ export const useRenderedComponent = (props: any, states: State) => {
   };
 
   const mouseEnter = (event: MouseEvent) => {
+    if (window.isDown) return;
     states.isHover = true;
     maskStyle.value = getHoverStyle();
   };
@@ -53,6 +54,7 @@ export const useRenderedComponent = (props: any, states: State) => {
     states.clickPoint.x = event.clientX - target.offsetLeft;
     states.clickPoint.y = event.clientY - target.offsetTop;
     states.isDown = true;
+    window.isDown = true;
   };
 
   const removeFocusStyle = () => {

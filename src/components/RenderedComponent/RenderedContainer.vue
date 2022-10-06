@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { onMounted } from "vue";
-import type { DragComp } from "@/pages/collectComponent";
 import { toRefs } from "vue";
+import type { DragComp } from "@/pages/collectComponent";
+
 import {
   useRenderedComponent,
   useComponentEventStates,
@@ -27,7 +28,7 @@ const { isHover, isChecked, isDown, offsetX, offsetY, clickPoint } =
   toRefs(states);
 
 onMounted(() => {
-  window.addEventListener("click", (event) => {
+  window.addEventListener("click", () => {
     if (!isHover.value) {
       isChecked.value = false;
       removeFocusStyle();
@@ -35,6 +36,7 @@ onMounted(() => {
   });
   window.addEventListener("mouseup", () => {
     isDown.value = false;
+    window.isDown = false;
   });
 
   window.addEventListener("mousemove", (event) => {
