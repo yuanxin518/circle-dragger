@@ -4,6 +4,13 @@ export const useComponentEventStates = (props: any) => {
   return reactive({
     isHover: false,
     isChecked: false,
+    isDown: false,
+    offsetX: 0,
+    offsetY: 0,
+    clickPoint: {
+      x: 0,
+      y: 0,
+    },
   });
 };
 
@@ -40,7 +47,15 @@ export const useRenderedComponent = (props: any, states: State) => {
     }
   };
 
-  const removeFocus = () => {
+  const mouseDown = (event: MouseEvent) => {
+    const target = event.target as HTMLDivElement;
+
+    states.clickPoint.x = event.clientX - target.offsetLeft;
+    states.clickPoint.y = event.clientY - target.offsetTop;
+    states.isDown = true;
+  };
+
+  const removeFocusStyle = () => {
     maskStyle.value = {};
   };
 
@@ -78,6 +93,7 @@ export const useRenderedComponent = (props: any, states: State) => {
     getDefaultStyle,
     mouseEnter,
     mouseLeave,
-    removeFocus,
+    mouseDown,
+    removeFocusStyle,
   };
 };

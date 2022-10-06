@@ -19,27 +19,51 @@ const {
   clickComponent,
   mouseEnter,
   mouseLeave,
-  removeFocus,
+  removeFocusStyle,
+  mouseDown,
 } = useRenderedComponent(props, states);
 
-const { isHover, isChecked } = toRefs(states);
+const { isHover, isChecked, isDown, offsetX, offsetY, clickPoint } =
+  toRefs(states);
 
 onMounted(() => {
   window.addEventListener("click", (event) => {
     if (!isHover.value) {
       isChecked.value = false;
-      removeFocus();
+      removeFocusStyle();
     }
+  });
+  window.addEventListener("mouseup", () => {
+    isDown.value = false;
+  });
+
+  window.addEventListener("mousemove", (event) => {
+    if (!isDown.value || !isChecked.value) return;
+
+    const nextXPoint = event.clientX - clickPoint.value.x;
+    const nextYPoint = event.clientY - clickPoint.value.y;
+
+    if (nextXPoint <= 0) {
+      offsetX.value = 0;
+      return;
+    }
+    if (nextYPoint <= 0) {
+      offsetY.value = 0;
+      return;
+    }
+    offsetX.value = nextXPoint;
+    offsetY.value = nextYPoint;
   });
 });
 </script>
 <template>
   <div
     class="rendered_container"
-    :style="containerStyle"
+    :style="{ ...containerStyle, left: `${offsetX}px`, top: `${offsetY}px` }"
     @click="clickComponent"
     @mouseenter="mouseEnter"
     @mouseleave="mouseLeave"
+    @mousedown="mouseDown"
   >
     <div class="click_mask" :style="maskStyle"></div>
     <component
