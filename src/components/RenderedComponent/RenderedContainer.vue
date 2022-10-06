@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { renderedComponents } from "@/pages/collectComponent";
 import { onMounted } from "vue";
 import type { DragComp } from "@/pages/collectComponent";
 import { toRefs } from "vue";
@@ -8,7 +7,12 @@ import {
   useComponentEventStates,
 } from "./useRenderedComponent";
 
-const states = useComponentEventStates();
+type IRenderedContainer = {
+  renderedComponent: DragComp;
+};
+const props = withDefaults(defineProps<IRenderedContainer>(), {});
+
+const states = useComponentEventStates(props);
 const {
   containerStyle,
   maskStyle,
@@ -16,7 +20,7 @@ const {
   mouseEnter,
   mouseLeave,
   removeFocus,
-} = useRenderedComponent(states);
+} = useRenderedComponent(props, states);
 
 const { isHover, isChecked } = toRefs(states);
 
@@ -30,27 +34,23 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="render_container">
-    <div
-      class="rendered_container"
-      v-for="(item, index) in (renderedComponents as DragComp[])"
-      :key="index"
-      :style="containerStyle"
-      @click="clickComponent"
-      @mouseenter="mouseEnter"
-      @mouseleave="mouseLeave"
-    >
-      <div class="click_mask" :style="maskStyle"></div>
-      <component :is="item.component" class="renderedComponent"></component>
-    </div>
+  <div
+    class="rendered_container"
+    :style="containerStyle"
+    @click="clickComponent"
+    @mouseenter="mouseEnter"
+    @mouseleave="mouseLeave"
+  >
+    <div class="click_mask" :style="maskStyle"></div>
+    <component
+      :is="renderedComponent.component"
+      :key="renderedComponent.key"
+      class="renderedComponent"
+    ></component>
   </div>
 </template>
 
 <style scoped>
-.render_container {
-  width: 100%;
-  height: 100%;
-}
 .rendered_container {
   display: block;
   position: absolute;

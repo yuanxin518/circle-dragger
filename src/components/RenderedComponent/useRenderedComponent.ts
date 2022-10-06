@@ -1,6 +1,6 @@
 import { reactive, ref, type CSSProperties } from "vue";
 
-export const useComponentEventStates = () => {
+export const useComponentEventStates = (props: any) => {
   return reactive({
     isHover: false,
     isChecked: false,
@@ -9,7 +9,7 @@ export const useComponentEventStates = () => {
 
 type State = ReturnType<typeof useComponentEventStates>;
 
-export const useRenderedComponent = (states: State) => {
+export const useRenderedComponent = (props: any, states: State) => {
   const containerStyle = ref<CSSProperties>();
   const maskStyle = ref<CSSProperties>();
 

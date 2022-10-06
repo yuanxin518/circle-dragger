@@ -5,6 +5,8 @@ import ColumnRuler from "./canvas/ColumnRuler.vue";
 import { onMounted, ref } from "vue";
 import { setRulerSize } from "./canvas/handlerRuler";
 import RenderedContainer from "../components/RenderedComponent/RenderedContainer.vue";
+import type { DragComp } from "./collectComponent";
+import { renderedComponents } from "./collectComponent";
 
 const viewController = ref<HTMLDivElement>();
 const view = ref<HTMLDivElement>();
@@ -40,7 +42,11 @@ onMounted(() => {
         </div>
         <div class="inner_controller">
           <ICanvas>
-            <RenderedContainer></RenderedContainer>
+            <RenderedContainer
+              v-for="(item, index) in (renderedComponents as DragComp[])"
+              :renderedComponent="item"
+              :key="index"
+            ></RenderedContainer>
           </ICanvas>
         </div>
       </div>
