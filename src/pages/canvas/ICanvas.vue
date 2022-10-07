@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import getMousePosition from "./getMousePosition";
 
 const dragCanvas = ref<HTMLDivElement | null>(null);
 
@@ -12,7 +11,10 @@ onMounted(() => {
     console.log("leave");
   });
   dragCanvas.value?.addEventListener("mousemove", (event) => {
-    const offsetProps = getMousePosition(event);
+    console.log({
+      offsetX: event.offsetX,
+      offsetY: event.offsetY,
+    });
   });
 });
 </script>

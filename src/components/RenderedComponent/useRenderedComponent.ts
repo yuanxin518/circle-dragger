@@ -20,7 +20,7 @@ export const useRenderedComponent = (props: any, states: State) => {
   const containerStyle = ref<CSSProperties>();
   const maskStyle = ref<CSSProperties>();
 
-  watch(states, (value, oldValue) => {
+  watch(states, (value) => {
     if (value.isChecked) {
       containerStyle.value = getMoveableStyle();
       maskStyle.value = getHoverStyle();
@@ -40,11 +40,11 @@ export const useRenderedComponent = (props: any, states: State) => {
       }
     }
   });
+
   /**
    * 点击组件
-   * @param event
    */
-  const clickComponent = (event: MouseEvent) => {
+  const clickComponent = () => {
     states.isChecked = true;
 
     if (!states.isHover) {
@@ -52,12 +52,12 @@ export const useRenderedComponent = (props: any, states: State) => {
     }
   };
 
-  const mouseEnter = (event: MouseEvent) => {
+  const mouseEnter = () => {
     if (window.isDown) return; //其它元素isDown为true
     states.isHover = true;
   };
 
-  const mouseLeave = (event: MouseEvent) => {
+  const mouseLeave = () => {
     if (states.isDown) return;
     states.isHover = false;
   };
