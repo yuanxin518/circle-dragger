@@ -1,4 +1,4 @@
-import { reactive, ref, type CSSProperties } from "vue";
+import { reactive, ref, watch, type CSSProperties } from "vue";
 
 export const useComponentEventStates = (props: any) => {
   return reactive({
@@ -20,32 +20,46 @@ export const useRenderedComponent = (props: any, states: State) => {
   const containerStyle = ref<CSSProperties>();
   const maskStyle = ref<CSSProperties>();
 
+  watch(states, (value, oldValue) => {
+    if (value.isChecked) {
+      containerStyle.value = getMoveableStyle();
+      maskStyle.value = getHoverStyle();
+    } else {
+      maskStyle.value = unFocusStyle();
+      containerStyle.value = getDefaultStyle();
+    }
+
+    if (value.isHover) {
+      if (!states.isChecked) {
+        maskStyle.value = getDefaultStyle();
+      }
+      maskStyle.value = getHoverStyle();
+    } else {
+      if (!states.isChecked) {
+        maskStyle.value = unFocusStyle();
+      }
+    }
+  });
   /**
    * 点击组件
    * @param event
    */
   const clickComponent = (event: MouseEvent) => {
-    containerStyle.value = getMoveableStyle();
     states.isChecked = true;
-    maskStyle.value = getCheckedStyle();
 
     if (!states.isHover) {
       states.isChecked = false;
-      maskStyle.value = getDefaultStyle();
     }
   };
 
   const mouseEnter = (event: MouseEvent) => {
-    if (window.isDown) return;
+    if (window.isDown) return; //其它元素isDown为true
     states.isHover = true;
-    maskStyle.value = getHoverStyle();
   };
 
   const mouseLeave = (event: MouseEvent) => {
+    if (states.isDown) return;
     states.isHover = false;
-    if (!states.isChecked) {
-      maskStyle.value = getDefaultStyle();
-    }
   };
 
   const mouseDown = (event: MouseEvent) => {
@@ -57,8 +71,8 @@ export const useRenderedComponent = (props: any, states: State) => {
     window.isDown = true;
   };
 
-  const removeFocusStyle = () => {
-    maskStyle.value = {};
+  const unFocusStyle = () => {
+    return {};
   };
 
   /**
@@ -68,6 +82,7 @@ export const useRenderedComponent = (props: any, states: State) => {
   const getMoveableStyle = (): CSSProperties => {
     return {
       cursor: "move",
+      "z-index": 4,
     };
   };
 
@@ -78,14 +93,10 @@ export const useRenderedComponent = (props: any, states: State) => {
     };
   };
 
-  const getCheckedStyle = (): CSSProperties => {
-    return {
-      ...getHoverStyle(),
-    };
-  };
-
   const getDefaultStyle = (): CSSProperties => {
-    return {};
+    return {
+      "z-index": 3,
+    };
   };
 
   return {
@@ -96,6 +107,6 @@ export const useRenderedComponent = (props: any, states: State) => {
     mouseEnter,
     mouseLeave,
     mouseDown,
-    removeFocusStyle,
+    unFocusStyle,
   };
 };

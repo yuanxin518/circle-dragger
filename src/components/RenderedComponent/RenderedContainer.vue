@@ -20,7 +20,6 @@ const {
   clickComponent,
   mouseEnter,
   mouseLeave,
-  removeFocusStyle,
   mouseDown,
 } = useRenderedComponent(props, states);
 
@@ -31,7 +30,6 @@ onMounted(() => {
   window.addEventListener("click", () => {
     if (!isHover.value) {
       isChecked.value = false;
-      removeFocusStyle();
     }
   });
   window.addEventListener("mouseup", () => {
