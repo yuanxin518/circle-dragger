@@ -13,7 +13,6 @@ onMounted(() => {
   });
   dragCanvas.value?.addEventListener("mousemove", (event) => {
     const offsetProps = getMousePosition(event);
-    console.log(offsetProps);
   });
 });
 </script>

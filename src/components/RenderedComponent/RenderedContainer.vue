@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { toRefs } from "vue";
 import type { DragComp } from "@/pages/collectComponent";
 
@@ -7,6 +7,7 @@ import {
   useRenderedComponent,
   useComponentEventStates,
 } from "./useRenderedComponent";
+import { useViewControllerStore } from "@/stores/viewController";
 
 type IRenderedContainer = {
   renderedComponent: DragComp;
@@ -25,6 +26,9 @@ const {
 
 const { isHover, isChecked, isDown, offsetX, offsetY, clickPoint } =
   toRefs(states);
+const { viewControllerConfig } = useViewControllerStore();
+const { width, height } = viewControllerConfig;
+const renderedContainer = ref<HTMLDivElement | null>(null);
 
 onMounted(() => {
   window.addEventListener("click", () => {
@@ -39,17 +43,26 @@ onMounted(() => {
 
   window.addEventListener("mousemove", (event) => {
     if (!isDown.value || !isChecked.value) return;
-
-    const nextXPoint = event.clientX - clickPoint.value.x;
-    const nextYPoint = event.clientY - clickPoint.value.y;
+    let nextXPoint = event.clientX - clickPoint.value.x;
+    let nextYPoint = event.clientY - clickPoint.value.y;
 
     if (nextXPoint <= 0) {
-      offsetX.value = 0;
-      return;
+      nextXPoint = 0;
+    }
+    if (
+      renderedContainer.value &&
+      nextXPoint >= width - renderedContainer.value?.clientWidth
+    ) {
+      nextXPoint = width - renderedContainer.value?.clientWidth;
     }
     if (nextYPoint <= 0) {
-      offsetY.value = 0;
-      return;
+      nextYPoint = 0;
+    }
+    if (
+      renderedContainer.value &&
+      nextYPoint >= height - renderedContainer.value.clientHeight
+    ) {
+      nextYPoint = height - renderedContainer.value.clientHeight;
     }
     offsetX.value = nextXPoint;
     offsetY.value = nextYPoint;
@@ -59,6 +72,7 @@ onMounted(() => {
 <template>
   <div
     class="rendered_container"
+    ref="renderedContainer"
     :style="{ ...containerStyle, left: `${offsetX}px`, top: `${offsetY}px` }"
     @click="clickComponent"
     @mouseenter="mouseEnter"

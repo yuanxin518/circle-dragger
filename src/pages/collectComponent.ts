@@ -36,7 +36,6 @@ export const renderComponent = (compName: string) => {
   if (dragComp) {
     renderedComponents.push(dragComp);
   }
-  console.log(renderedComponents);
 };
 
 export { compBucket };

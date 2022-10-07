@@ -7,7 +7,10 @@ import { setRulerSize } from "./canvas/handlerRuler";
 import RenderedContainer from "../components/RenderedComponent/RenderedContainer.vue";
 import type { DragComp } from "./collectComponent";
 import { renderedComponents } from "./collectComponent";
+import { useViewControllerStore } from "@/stores/viewController";
 
+const { viewControllerConfig } = useViewControllerStore();
+const { width, height } = viewControllerConfig;
 const viewController = ref<HTMLDivElement>();
 const view = ref<HTMLDivElement>();
 
@@ -33,14 +36,21 @@ onMounted(() => {
       <div
         class="view_controller"
         ref="viewController"
-        :style="{ padding: 66 + 'px' }"
+        :style="{
+          padding: 66 + 'px',
+          width: `${width}px`,
+          height: `${height}px`,
+        }"
       >
         <div class="view_ruler">
           <span class="ruler_setting"></span>
           <RowRuler></RowRuler>
           <ColumnRuler></ColumnRuler>
         </div>
-        <div class="inner_controller">
+        <div
+          class="inner_controller"
+          :style="{ width: `${width}px`, height: `${height}px` }"
+        >
           <ICanvas>
             <RenderedContainer
               v-for="(item, index) in (renderedComponents as DragComp[])"
@@ -66,13 +76,9 @@ onMounted(() => {
   overflow: auto;
 }
 .view_controller {
-  width: 1920px;
-  height: 1080px;
   box-sizing: content-box;
 }
 .inner_controller {
-  width: 1920px;
-  height: 1080px;
   background-color: #f0f0f0;
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 20px 0px;
@@ -84,7 +90,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 3;
+  z-index: 10;
 }
 
 .ruler_setting {
