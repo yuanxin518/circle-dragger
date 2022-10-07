@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import ElementHolder from "../components/ElementHolder.vue";
-import { compBucket } from "./collectComponent";
+import { useRenderConponentStore } from "@/stores/renderComponent";
+import ElementHolder from "@/components/ElementHolder.vue";
+
+const { compBucket } = useRenderConponentStore();
 </script>
 <template>
   <div class="left_panel">

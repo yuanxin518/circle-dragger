@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import { toRefs } from "vue";
-import type { DragComp } from "@/pages/collectComponent";
 
 import {
   useRenderedComponent,
   useComponentEventStates,
 } from "./useRenderedComponent";
 import { useViewControllerStore } from "@/stores/viewController";
+import type { DragComp } from "@/types/CollectComponent";
 
 type IRenderedContainer = {
   renderedComponent: DragComp;

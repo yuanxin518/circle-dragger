@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { renderComponent } from "@/pages/collectComponent";
+import { useRenderConponentStore } from "@/stores/renderComponent";
 
+const { renderComponent } = useRenderConponentStore();
 type IElementHolder = {
   compName: string;
 };
