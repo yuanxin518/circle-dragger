@@ -1,4 +1,4 @@
-import ButtonComp from "./ButtonComp.vue";
-import EditText from "./EditText.vue";
+import ButtonVue from "./Button/ButtonVue.vue";
+import EditTextVue from "./EditText/EditTextVue.vue";
 
-export { EditText, ButtonComp };
+export { EditTextVue, ButtonVue };
