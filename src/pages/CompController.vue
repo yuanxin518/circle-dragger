@@ -9,7 +9,10 @@ const { compBucket } = useRenderConponentStore();
     <ElementHolder
       v-for="item in compBucket"
       :key="item[1].key"
-      :compName="item[0]"
+      :compName="{
+        keyName: item[0],
+        name: item[1].name,
+      }"
     ></ElementHolder>
   </div>
 </template>

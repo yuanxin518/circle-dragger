@@ -3,16 +3,17 @@ import { useRenderConponentStore } from "@/stores/renderComponent";
 
 const { renderComponent } = useRenderConponentStore();
 type IElementHolder = {
-  compName: string;
+  compName: {
+    keyName: string;
+    name: string;
+  };
 };
-const props = withDefaults(defineProps<IElementHolder>(), {
-  compName: "",
-});
+withDefaults(defineProps<IElementHolder>(), {});
 </script>
 <template>
   <div class="element_holder">
-    <div class="holder_content" @click="renderComponent(props.compName)">
-      {{ props.compName }}
+    <div class="holder_content" @click="renderComponent(compName.keyName)">
+      {{ compName.name }}
     </div>
   </div>
 </template>

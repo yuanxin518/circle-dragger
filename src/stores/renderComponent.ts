@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { shallowReactive } from "vue";
-import * as DragElements from "@/components/drag-elements/expose";
+import DragElements from "@/components/drag-elements/expose";
 import type { DragComp } from "@/types/CollectComponent";
 
 export const useRenderConponentStore = defineStore("renderComponent", () => {
@@ -21,7 +21,8 @@ export const useRenderConponentStore = defineStore("renderComponent", () => {
   for (const item of Object.entries(DragElements)) {
     defineDragComp(item[0], {
       key: compBucket.size,
-      component: item[1],
+      component: item[1].component,
+      name: item[1].name,
     });
   }
   /**
@@ -40,5 +41,6 @@ export const useRenderConponentStore = defineStore("renderComponent", () => {
     renderedComponents,
     compBucket,
     renderComponent,
+    defineDragComp,
   };
 });
