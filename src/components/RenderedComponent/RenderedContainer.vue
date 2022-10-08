@@ -74,7 +74,11 @@ onMounted(() => {
   <div
     class="rendered_container"
     ref="renderedContainer"
-    :style="{ ...containerStyle, left: `${offsetX}px`, top: `${offsetY}px` }"
+    :style="{
+      ...containerStyle,
+      left: `${offsetX}px`,
+      top: `${offsetY}px`,
+    }"
     @click="clickComponent"
     @mouseenter="mouseEnter"
     @mouseleave="mouseLeave"
