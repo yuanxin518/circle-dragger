@@ -1,12 +1,12 @@
-export type UniversalAttrType = {
-  position: {
-    name: "组件位置";
-    offsetLeft: number;
-    offsetTop: number;
+export namespace ComponentAttribute {
+  export type UniversalAttrType = {
+    position: {
+      left: number;
+      top: number;
+    };
+    size: {
+      width: number;
+      height: number;
+    };
   };
-  size: {
-    name: "组件尺寸";
-    width: number;
-    height: number;
-  };
-};
+}

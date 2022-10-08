@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref, type CSSProperties } from "vue";
 import { toRefs } from "vue";
 
 import {
@@ -9,12 +9,11 @@ import {
 
 import { useViewControllerStore } from "@/stores/viewController";
 import type { DragComp } from "@/types/CollectComponent";
-
+import type { ComponentAttribute } from "@/types/ComponentAttribute";
 type IRenderedContainer = {
   renderedComponent: DragComp;
 };
 const props = withDefaults(defineProps<IRenderedContainer>(), {});
-
 const states = useComponentEventStates(props);
 const {
   containerStyle,
@@ -30,6 +29,16 @@ const { isHover, isChecked, isDown, offsetX, offsetY, clickPoint } =
 const { viewControllerConfig } = useViewControllerStore();
 const { width, height } = viewControllerConfig;
 const renderedContainer = ref<HTMLDivElement | null>(null);
+const componentAttribute = reactive<ComponentAttribute.UniversalAttrType>({
+  position: {
+    left: 0,
+    top: 0,
+  },
+  size: {
+    width: 0,
+    height: 0,
+  },
+});
 
 onMounted(() => {
   window.addEventListener("click", () => {
@@ -69,6 +78,39 @@ onMounted(() => {
     offsetY.value = nextYPoint;
   });
 });
+
+const linePoint = (index: number): CSSProperties => {
+  index = index + 1;
+  let left = "0";
+  let top = "0";
+  let transform = "translate(-50%,-50%)";
+
+  if ([1, 2, 3].includes(index)) {
+    transform = "translate(-50%,-50%)";
+  }
+  if ([4, 5, 6].includes(index)) {
+    transform = "translate(-50%,-50%)";
+    top = "100%";
+  }
+  if ([2, 4].includes(index)) {
+    left = "50%";
+  }
+
+  if ([3, 6].includes(index)) {
+    transform = "translate(-50%,-50%)";
+    left = "100%";
+  }
+  return {
+    width: "8px",
+    height: "8px",
+    backgroundColor: "#44aaff",
+    borderRadius: "50%",
+    position: "absolute",
+    transform,
+    left,
+    top,
+  };
+};
 </script>
 <template>
   <div
@@ -84,7 +126,13 @@ onMounted(() => {
     @mouseleave="mouseLeave"
     @mousedown="mouseDown"
   >
-    <div class="click_mask" :style="maskStyle"></div>
+    <div class="click_mask" :style="maskStyle">
+      <div
+        v-for="(item, index) in 6"
+        :key="index"
+        :style="linePoint(index)"
+      ></div>
+    </div>
     <component
       :is="renderedComponent.component"
       :key="renderedComponent.key"
@@ -111,7 +159,6 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   pointer-events: none;
-
   transition: all ease-in-out 0.1s;
 }
 </style>

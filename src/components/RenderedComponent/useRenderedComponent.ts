@@ -71,8 +71,10 @@ export const useRenderedComponent = (props: any, states: State) => {
     window.isDown = true;
   };
 
-  const unFocusStyle = () => {
-    return {};
+  const unFocusStyle = (): CSSProperties => {
+    return {
+      opacity: "0",
+    };
   };
 
   /**
