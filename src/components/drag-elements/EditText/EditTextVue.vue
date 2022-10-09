@@ -2,10 +2,3 @@
 <template>
   <input type="text" class="input" />
 </template>
-
-<style scoped>
-.input {
-  width: 200px;
-  height: 40px;
-}
-</style>
