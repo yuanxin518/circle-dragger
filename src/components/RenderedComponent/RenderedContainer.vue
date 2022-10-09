@@ -1,20 +1,28 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref, type CSSProperties } from "vue";
+import type { DragComp } from "@/types/CollectComponent";
+import { onMounted, ref, watch, type CSSProperties } from "vue";
+import { useUniversalAttribute } from "@/components/drag-elements/useAttribute";
 import { toRefs } from "vue";
-
 import {
   useRenderedComponent,
   useComponentEventStates,
 } from "./useRenderedComponent";
 
+import { useDataControllerStore } from "@/stores/dataController";
 import { useViewControllerStore } from "@/stores/viewController";
-import type { DragComp } from "@/types/CollectComponent";
-import type { ComponentAttribute } from "@/types/ComponentAttribute";
+
 type IRenderedContainer = {
   renderedComponent: DragComp;
 };
+const renderedComponentInstance = ref(null);
 const props = withDefaults(defineProps<IRenderedContainer>(), {});
+const { viewControllerConfig } = useViewControllerStore();
+const { loadAttribute, cancelLoadAttribute } = useDataControllerStore();
 const states = useComponentEventStates(props);
+const attrs = useUniversalAttribute();
+const { width, height } = viewControllerConfig;
+const renderedContainer = ref<HTMLDivElement | null>(null);
+
 const {
   containerStyle,
   maskStyle,
@@ -22,30 +30,47 @@ const {
   mouseEnter,
   mouseLeave,
   mouseDown,
+  getMoveableStyle,
+  getDefaultStyle,
+  getHoverStyle,
+  unFocusStyle,
 } = useRenderedComponent(props, states);
 
-const { isHover, isChecked, isDown, offsetX, offsetY, clickPoint } =
-  toRefs(states);
-const { viewControllerConfig } = useViewControllerStore();
-const { width, height } = viewControllerConfig;
-const renderedContainer = ref<HTMLDivElement | null>(null);
-const componentAttribute = reactive<ComponentAttribute.UniversalAttrType>({
-  position: {
-    left: 0,
-    top: 0,
-  },
-  size: {
-    width: 0,
-    height: 0,
-  },
+const { position, size } = toRefs(attrs);
+const { isHover, isChecked, isDown, clickPoint } = toRefs(states);
+
+const cancelCheck = () => {
+  if (!isHover.value) {
+    isChecked.value = false;
+  }
+};
+
+defineExpose(cancelCheck);
+
+watch(states, (value) => {
+  if (value.isChecked) {
+    containerStyle.value = getMoveableStyle();
+    maskStyle.value = getHoverStyle();
+    loadAttribute(attrs);
+  } else {
+    maskStyle.value = unFocusStyle();
+    containerStyle.value = getDefaultStyle();
+    cancelLoadAttribute();
+  }
+
+  if (value.isHover) {
+    if (!states.isChecked) {
+      maskStyle.value = getDefaultStyle();
+    }
+    maskStyle.value = getHoverStyle();
+  } else {
+    if (!states.isChecked) {
+      maskStyle.value = unFocusStyle();
+    }
+  }
 });
 
 onMounted(() => {
-  window.addEventListener("click", () => {
-    if (!isHover.value) {
-      isChecked.value = false;
-    }
-  });
   window.addEventListener("mouseup", () => {
     isDown.value = false;
     window.isDown = false;
@@ -74,8 +99,8 @@ onMounted(() => {
     ) {
       nextYPoint = height - renderedContainer.value.clientHeight;
     }
-    offsetX.value = nextXPoint;
-    offsetY.value = nextYPoint;
+    position.value.left = nextXPoint;
+    position.value.top = nextYPoint;
   });
 });
 
@@ -118,8 +143,8 @@ const linePoint = (index: number): CSSProperties => {
     ref="renderedContainer"
     :style="{
       ...containerStyle,
-      left: `${offsetX}px`,
-      top: `${offsetY}px`,
+      left: `${position.left}px`,
+      top: `${position.top}px`,
     }"
     @click="clickComponent"
     @mouseenter="mouseEnter"
@@ -136,6 +161,8 @@ const linePoint = (index: number): CSSProperties => {
     <component
       :is="renderedComponent.component"
       :key="renderedComponent.key"
+      :style="{ width: `${size.width}px`, height: `${size.height}px` }"
+      ref="renderedComponentInstance"
       class="renderedComponent"
     ></component>
   </div>
@@ -143,7 +170,6 @@ const linePoint = (index: number): CSSProperties => {
 
 <style scoped>
 .rendered_container {
-  display: block;
   position: absolute;
   user-select: none;
 }
