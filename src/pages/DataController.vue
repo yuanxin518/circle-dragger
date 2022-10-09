@@ -1,22 +1,9 @@
 <script lang="ts" setup>
 import { useDataControllerStore } from "@/stores/dataController";
-import { computed, ref, toRefs, watch, type CSSProperties } from "vue";
+import { computed, toRefs } from "vue";
 
-const dataControllerStyle = ref<CSSProperties>({});
 const dataControllerStore = useDataControllerStore();
 const { loadedUniversalAttributes } = toRefs(dataControllerStore);
-
-watch(dataControllerStore, (value) => {
-  if (value.isLoadAttribute) {
-    dataControllerStyle.value = {
-      "min-width": "400px",
-    };
-  } else {
-    dataControllerStyle.value = {
-      width: "0px",
-    };
-  }
-});
 
 const attributes = computed(() => {
   return loadedUniversalAttributes.value;
@@ -59,31 +46,42 @@ const handlerAttribute = computed(() => {
 });
 </script>
 <template>
-  <div v-if="!dataControllerStore.isLoadAttribute"></div>
-  <div class="data_controller" :style="dataControllerStyle" v-else>
-    <div
-      class="data_item"
-      v-for="(item, index) in handlerAttribute"
-      :key="index"
-    >
-      <div class="item_title">
-        <div>{{ item.title }}</div>
-      </div>
+  <Transition>
+    <div class="data_controller" v-if="dataControllerStore.isLoadAttribute">
       <div
-        class="item_content"
-        v-for="(child, cIndex) in item.item"
-        :key="cIndex"
+        class="data_item"
+        v-for="(item, index) in handlerAttribute"
+        :key="index"
       >
-        <div>{{ child.name }}</div>
-        <div>{{ child.value }}</div>
+        <div class="item_title">
+          <div>{{ item.title }}</div>
+        </div>
+        <div
+          class="item_content"
+          v-for="(child, cIndex) in item.item"
+          :key="cIndex"
+        >
+          <div>{{ child.name }}</div>
+          <div>{{ child.value }}</div>
+        </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 <style scoped>
 .data_controller {
-  transition: all ease-in-out 0.15s;
+  min-width: 400px;
 }
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.15s ease-in-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  min-width: 0;
+}
+
 .data_item {
   width: 100%;
 }
