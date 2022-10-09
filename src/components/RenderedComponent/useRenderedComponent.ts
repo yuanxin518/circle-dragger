@@ -1,12 +1,10 @@
-import { reactive, ref, watch, type CSSProperties } from "vue";
+import { reactive, ref, type CSSProperties } from "vue";
 
 export const useComponentEventStates = (props: any) => {
   return reactive({
     isHover: false,
     isChecked: false,
     isDown: false,
-    offsetX: 0,
-    offsetY: 0,
     clickPoint: {
       x: 0,
       y: 0,
@@ -19,27 +17,6 @@ type State = ReturnType<typeof useComponentEventStates>;
 export const useRenderedComponent = (props: any, states: State) => {
   const containerStyle = ref<CSSProperties>();
   const maskStyle = ref<CSSProperties>();
-
-  watch(states, (value) => {
-    if (value.isChecked) {
-      containerStyle.value = getMoveableStyle();
-      maskStyle.value = getHoverStyle();
-    } else {
-      maskStyle.value = unFocusStyle();
-      containerStyle.value = getDefaultStyle();
-    }
-
-    if (value.isHover) {
-      if (!states.isChecked) {
-        maskStyle.value = getDefaultStyle();
-      }
-      maskStyle.value = getHoverStyle();
-    } else {
-      if (!states.isChecked) {
-        maskStyle.value = unFocusStyle();
-      }
-    }
-  });
 
   /**
    * 点击组件
@@ -106,9 +83,11 @@ export const useRenderedComponent = (props: any, states: State) => {
     maskStyle,
     clickComponent,
     getDefaultStyle,
+    getMoveableStyle,
+    unFocusStyle,
+    getHoverStyle,
     mouseEnter,
     mouseLeave,
     mouseDown,
-    unFocusStyle,
   };
 };

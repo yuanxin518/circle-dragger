@@ -14,6 +14,18 @@ const { renderedComponents } = useRenderConponentStore();
 const { width, height } = viewControllerConfig;
 const viewController = ref<HTMLDivElement>();
 const view = ref<HTMLDivElement>();
+const renderedComponentRef: any[] = [];
+const renderedComponentInstance = (el: any) => {
+  if (el) {
+    renderedComponentRef.push(el);
+  }
+};
+
+const cancelCheck = () => {
+  renderedComponentRef.forEach((item) => {
+    item.call("cancelCheck");
+  });
+};
 
 onMounted(() => {
   if (!viewController.value) return;
@@ -52,11 +64,12 @@ onMounted(() => {
           class="inner_controller"
           :style="{ width: `${width}px`, height: `${height}px` }"
         >
-          <ICanvas>
+          <ICanvas @click="cancelCheck">
             <RenderedContainer
               v-for="(item, index) in (renderedComponents as DragComp[])"
               :renderedComponent="item"
               :key="index"
+              :ref="renderedComponentInstance"
             ></RenderedContainer>
           </ICanvas>
         </div>
