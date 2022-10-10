@@ -5,6 +5,7 @@ export const useComponentEventStates = (props: any) => {
     isHover: false,
     isChecked: false,
     isDown: false,
+    isResize: false,
     clickPoint: {
       x: 0,
       y: 0,

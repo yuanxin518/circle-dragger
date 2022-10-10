@@ -37,7 +37,7 @@ const {
 } = useRenderedComponent(props, states);
 
 const { position, size } = toRefs(attrs);
-const { isHover, isChecked, isDown, clickPoint } = toRefs(states);
+const { isHover, isChecked, isDown, clickPoint, isResize } = toRefs(states);
 
 const cancelCheck = () => {
   if (!isHover.value) {
@@ -74,10 +74,11 @@ onMounted(() => {
   window.addEventListener("mouseup", () => {
     isDown.value = false;
     window.isDown = false;
+    isResize.value = false;
   });
 
   window.addEventListener("mousemove", (event) => {
-    if (!isDown.value || !isChecked.value) return;
+    if (!isDown.value || !isChecked.value || isResize.value) return;
     let nextXPoint = event.clientX - clickPoint.value.x;
     let nextYPoint = event.clientY - clickPoint.value.y;
 
@@ -109,6 +110,7 @@ const linePoint = (index: number): CSSProperties => {
   let left = "0";
   let top = "0";
   let transform = "translate(-50%,-50%)";
+  let cursor = "";
 
   if ([1, 2, 3].includes(index)) {
     transform = "translate(-50%,-50%)";
@@ -125,16 +127,40 @@ const linePoint = (index: number): CSSProperties => {
     transform = "translate(-50%,-50%)";
     left = "100%";
   }
+
+  switch (index) {
+    case 1:
+    case 6:
+      cursor = "se-resize";
+      break;
+    case 2:
+    case 4:
+      cursor = "ns-resize";
+      break;
+    case 3:
+    case 5:
+      cursor = "nesw-resize";
+      break;
+    default:
+      break;
+  }
+
   return {
     width: "8px",
     height: "8px",
     backgroundColor: "#44aaff",
     borderRadius: "50%",
     position: "absolute",
+    pointerEvents: "all",
     transform,
     left,
     top,
+    cursor,
   };
+};
+
+const linePointMouse = () => {
+  isResize.value = true;
 };
 </script>
 <template>
@@ -155,6 +181,7 @@ const linePoint = (index: number): CSSProperties => {
       <div
         v-for="(item, index) in 6"
         :key="index"
+        @mouseenter="linePointMouse()"
         :style="linePoint(index)"
       ></div>
     </div>
