@@ -2,18 +2,18 @@
 import type { DragComp } from "@/types/CollectComponent";
 import { onMounted, ref, watch, type CSSProperties } from "vue";
 import { useUniversalAttribute } from "@/components/drag-elements/useAttribute";
+import { useDataControllerStore } from "@/stores/dataController";
+import { useViewControllerStore } from "@/stores/viewController";
 import { toRefs } from "vue";
 import {
   useRenderedComponent,
   useComponentEventStates,
 } from "./useRenderedComponent";
 
-import { useDataControllerStore } from "@/stores/dataController";
-import { useViewControllerStore } from "@/stores/viewController";
-
 type IRenderedContainer = {
   renderedComponent: DragComp;
 };
+
 const renderedComponentInstance = ref(null);
 const props = withDefaults(defineProps<IRenderedContainer>(), {});
 const { viewControllerConfig } = useViewControllerStore();
@@ -37,7 +37,8 @@ const {
 } = useRenderedComponent(props, states);
 
 const { position, size } = toRefs(attrs);
-const { isHover, isChecked, isDown, clickPoint, isResize } = toRefs(states);
+const { isHover, isChecked, isDown, clickPoint, isResize, resizePointIndex } =
+  toRefs(states);
 
 const cancelCheck = () => {
   if (!isHover.value) {
@@ -78,68 +79,109 @@ onMounted(() => {
   });
 
   window.addEventListener("mousemove", (event) => {
-    if (!isDown.value || !isChecked.value || isResize.value) return;
-    let nextXPoint = event.clientX - clickPoint.value.x;
-    let nextYPoint = event.clientY - clickPoint.value.y;
+    if (isResize.value) {
+      if (
+        event.clientX - clickPoint.value.x < 0 ||
+        event.clientY - clickPoint.value.y < 0
+        //TODO: 超出viewController边界的情况
+      ) {
+        return;
+      }
+      switch (resizePointIndex.value) {
+        // TODO: 左上角，右上角，左下角的情况
+        case 0:
+        case 1:
+        case 3:
+          break;
+        case 4:
+        case 5:
+          size.value.width = event.clientX - clickPoint.value.x;
+          break;
+        case 2:
+        case 6:
+          size.value.height = event.clientY - clickPoint.value.y;
+          break;
+        case 7:
+          size.value.width = event.clientX - clickPoint.value.x;
+          size.value.height = event.clientY - clickPoint.value.y;
+          break;
+        default:
+          break;
+      }
+    } else {
+      if (!isDown.value || !isChecked.value) return;
 
-    if (nextXPoint <= 0) {
-      nextXPoint = 0;
+      let nextXPoint = event.clientX - clickPoint.value.x;
+      let nextYPoint = event.clientY - clickPoint.value.y;
+      if (nextXPoint <= 0) {
+        nextXPoint = 0;
+      }
+      if (
+        renderedContainer.value &&
+        nextXPoint >= width - renderedContainer.value?.clientWidth
+      ) {
+        nextXPoint = width - renderedContainer.value?.clientWidth;
+      }
+      if (nextYPoint <= 0) {
+        nextYPoint = 0;
+      }
+      if (
+        renderedContainer.value &&
+        nextYPoint >= height - renderedContainer.value.clientHeight
+      ) {
+        nextYPoint = height - renderedContainer.value.clientHeight;
+      }
+      position.value.left = nextXPoint;
+      position.value.top = nextYPoint;
     }
-    if (
-      renderedContainer.value &&
-      nextXPoint >= width - renderedContainer.value?.clientWidth
-    ) {
-      nextXPoint = width - renderedContainer.value?.clientWidth;
-    }
-    if (nextYPoint <= 0) {
-      nextYPoint = 0;
-    }
-    if (
-      renderedContainer.value &&
-      nextYPoint >= height - renderedContainer.value.clientHeight
-    ) {
-      nextYPoint = height - renderedContainer.value.clientHeight;
-    }
-    position.value.left = nextXPoint;
-    position.value.top = nextYPoint;
   });
 });
 
 const linePoint = (index: number): CSSProperties => {
-  index = index + 1;
   let left = "0";
   let top = "0";
   let transform = "translate(-50%,-50%)";
   let cursor = "";
 
-  if ([1, 2, 3].includes(index)) {
+  if ([0, 1, 2].includes(index)) {
     transform = "translate(-50%,-50%)";
-  }
-  if ([4, 5, 6].includes(index)) {
-    transform = "translate(-50%,-50%)";
+    top = "0";
+    if (index === 1) {
+      left = "50%";
+    } else if (index === 2) {
+      left = "100%";
+    }
+  } else if ([3, 4].includes(index)) {
+    top = "50%";
+    if (index === 4) {
+      left = "100%";
+    }
+  } else if ([5, 6, 7].includes(index)) {
     top = "100%";
-  }
-  if ([2, 4].includes(index)) {
-    left = "50%";
-  }
-
-  if ([3, 6].includes(index)) {
     transform = "translate(-50%,-50%)";
-    left = "100%";
+    if (index === 6) {
+      left = "50%";
+    } else if (index === 7) {
+      left = "100%";
+    }
   }
 
   switch (index) {
-    case 1:
-    case 6:
+    case 0:
+    case 7:
       cursor = "se-resize";
       break;
-    case 2:
-    case 4:
+    case 1:
+    case 6:
       cursor = "ns-resize";
       break;
-    case 3:
+    case 2:
     case 5:
       cursor = "nesw-resize";
+      break;
+    case 3:
+    case 4:
+      cursor = "ew-resize";
       break;
     default:
       break;
@@ -159,8 +201,11 @@ const linePoint = (index: number): CSSProperties => {
   };
 };
 
-const linePointMouse = () => {
+const linePointMouse = (event: MouseEvent, index: number) => {
   isResize.value = true;
+  clickPoint.value.x = event.clientX;
+  clickPoint.value.y = event.clientY;
+  resizePointIndex.value = index;
 };
 </script>
 <template>
@@ -171,6 +216,8 @@ const linePointMouse = () => {
       ...containerStyle,
       left: `${position.left}px`,
       top: `${position.top}px`,
+      width: `${size.width}px`,
+      height: `${size.height}px`,
     }"
     @click="clickComponent"
     @mouseenter="mouseEnter"
@@ -179,16 +226,22 @@ const linePointMouse = () => {
   >
     <div class="click_mask" :style="maskStyle">
       <div
-        v-for="(item, index) in 6"
+        v-for="(item, index) in 8"
         :key="index"
-        @mouseenter="linePointMouse()"
         :style="linePoint(index)"
+        @mousedown="linePointMouse($event, index)"
       ></div>
     </div>
     <component
       :is="renderedComponent.component"
       :key="renderedComponent.key"
-      :style="{ width: `${size.width}px`, height: `${size.height}px` }"
+      :style="{
+        left: 0,
+        top: 0,
+        position: `absolute`,
+        width: `${size.width}px`,
+        height: `${size.height}px`,
+      }"
       ref="renderedComponentInstance"
       class="renderedComponent"
     ></component>
