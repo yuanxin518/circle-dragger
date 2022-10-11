@@ -80,13 +80,13 @@ onMounted(() => {
 
   window.addEventListener("mousemove", (event) => {
     if (isResize.value) {
-      if (
-        event.clientX - clickPoint.value.x < 0 ||
-        event.clientY - clickPoint.value.y < 0
-        //TODO: 超出viewController边界的情况
-      ) {
+      const resizeClickXPoint = event.clientX - clickPoint.value.x;
+      const resizeClickYPoint = event.clientY - clickPoint.value.y;
+      if (resizeClickXPoint < 0 || resizeClickYPoint < 0) {
         return;
       }
+      let nextResizeWidth = size.value.width;
+      let nextResizeHeight = size.value.height;
       switch (resizePointIndex.value) {
         // TODO: 左上角，右上角，左下角的情况
         case 0:
@@ -95,19 +95,26 @@ onMounted(() => {
           break;
         case 4:
         case 5:
-          size.value.width = event.clientX - clickPoint.value.x;
+          nextResizeWidth = event.clientX - clickPoint.value.x;
           break;
         case 2:
         case 6:
-          size.value.height = event.clientY - clickPoint.value.y;
+          nextResizeHeight = event.clientY - clickPoint.value.y;
           break;
         case 7:
-          size.value.width = event.clientX - clickPoint.value.x;
-          size.value.height = event.clientY - clickPoint.value.y;
+          nextResizeWidth = event.clientX - clickPoint.value.x;
+          nextResizeHeight = event.clientY - clickPoint.value.y;
           break;
         default:
           break;
       }
+      if (nextResizeHeight + position.value.top > 1080) {
+        nextResizeHeight = 1080 - position.value.top;
+      } else if (nextResizeWidth + position.value.left > 1920) {
+        nextResizeWidth = 1920 - position.value.left;
+      }
+      size.value.height = nextResizeHeight;
+      size.value.width = nextResizeWidth;
     } else {
       if (!isDown.value || !isChecked.value) return;
 
