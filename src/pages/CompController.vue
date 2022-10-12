@@ -6,14 +6,7 @@ const { compBucket } = useRenderConponentStore();
 </script>
 <template>
   <div class="left_panel">
-    <ElementHolder
-      v-for="item in compBucket"
-      :key="item[1].key"
-      :compName="{
-        keyName: item[0],
-        name: item[1].name,
-      }"
-    ></ElementHolder>
+    <ElementHolder :compList="compBucket"></ElementHolder>
   </div>
 </template>
 <style scoped>
