@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { DragComp } from "@/types/CollectComponent";
-import { onMounted, ref, watch, type CSSProperties } from "vue";
+import { nextTick, onMounted, ref, watch, type CSSProperties } from "vue";
 import { useUniversalAttribute } from "@/components/drag-elements/useAttribute";
 import { useDataControllerStore } from "@/stores/dataController";
 import { useViewControllerStore } from "@/stores/viewController";
@@ -22,6 +22,12 @@ const states = useComponentEventStates(props);
 const attrs = useUniversalAttribute();
 const { width, height } = viewControllerConfig;
 const renderedContainer = ref<HTMLDivElement | null>(null);
+const currentResize = ref({
+  left: 0,
+  top: 0,
+  width: 0,
+  height: 0,
+});
 
 const {
   containerStyle,
@@ -78,26 +84,72 @@ onMounted(() => {
     isResize.value = false;
   });
 
-  window.addEventListener("mousemove", (event) => {
+  window.addEventListener("mousemove", async (event) => {
     if (isResize.value) {
-      const resizeClickXPoint = event.clientX - clickPoint.value.x;
-      const resizeClickYPoint = event.clientY - clickPoint.value.y;
-      if (resizeClickXPoint < 0 || resizeClickYPoint < 0) {
-        return;
-      }
       let nextResizeWidth = size.value.width;
       let nextResizeHeight = size.value.height;
+      let nextResizeLeft = position.value.left;
+      let nextResizeTop = position.value.top;
       switch (resizePointIndex.value) {
-        // TODO: 左上角，右上角，左下角的情况
+        //TODO:抽离重复逻辑
+
         case 0:
         case 1:
+        case 2:
         case 3:
+        case 5:
+          if ([0, 3, 5].includes(resizePointIndex.value)) {
+            nextResizeWidth =
+              currentResize.value.width - (event.clientX - clickPoint.value.x);
+            if (nextResizeWidth >= 0) {
+              nextResizeLeft =
+                currentResize.value.left + event.clientX - clickPoint.value.x;
+            }
+
+            // resize容器直到容器宽度或高度为0的情况;
+            if (nextResizeWidth <= 0) {
+              nextResizeLeft =
+                currentResize.value.width + currentResize.value.left;
+            }
+            if (nextResizeHeight <= 0) {
+              nextResizeTop = currentResize.value.top;
+            }
+
+            if (resizePointIndex.value === 5) {
+              nextResizeHeight = event.clientY - clickPoint.value.y;
+            }
+          }
+          if ([0, 1, 2].includes(resizePointIndex.value)) {
+            nextResizeHeight =
+              currentResize.value.height - (event.clientY - clickPoint.value.y);
+            if (nextResizeHeight >= 0) {
+              nextResizeTop =
+                currentResize.value.top + event.clientY - clickPoint.value.y;
+            }
+            if (resizePointIndex.value === 2) {
+              nextResizeWidth = event.clientX - clickPoint.value.x;
+            }
+
+            // resize容器直到容器宽度或高度为0的情况;
+            if (nextResizeHeight <= 0) {
+              nextResizeTop =
+                currentResize.value.top + currentResize.value.height;
+            }
+          }
+          // 鼠标超出边界的情况
+          if (nextResizeLeft < 0) {
+            nextResizeWidth =
+              currentResize.value.left + currentResize.value.width;
+          }
+          if (nextResizeTop < 0) {
+            nextResizeHeight =
+              currentResize.value.top + currentResize.value.height;
+          }
+
           break;
         case 4:
-        case 5:
           nextResizeWidth = event.clientX - clickPoint.value.x;
           break;
-        case 2:
         case 6:
           nextResizeHeight = event.clientY - clickPoint.value.y;
           break;
@@ -108,13 +160,21 @@ onMounted(() => {
         default:
           break;
       }
-      if (nextResizeHeight + position.value.top > 1080) {
+
+      if (nextResizeHeight < 0) nextResizeHeight = 0;
+      if (nextResizeWidth < 0) nextResizeWidth = 0;
+      if (nextResizeHeight + position.value.top > 1080)
         nextResizeHeight = 1080 - position.value.top;
-      } else if (nextResizeWidth + position.value.left > 1920) {
+      if (nextResizeWidth + position.value.left > 1920)
         nextResizeWidth = 1920 - position.value.left;
-      }
+      if (nextResizeLeft < 0) nextResizeLeft = 0;
+      if (nextResizeTop < 0) nextResizeTop = 0;
+      if (nextResizeLeft > 1920) nextResizeLeft = 1920;
+      if (nextResizeTop > 1080) nextResizeTop = 1080;
       size.value.height = nextResizeHeight;
       size.value.width = nextResizeWidth;
+      position.value.left = nextResizeLeft;
+      position.value.top = nextResizeTop;
     } else {
       if (!isDown.value || !isChecked.value) return;
 
@@ -213,6 +273,12 @@ const linePointMouse = (event: MouseEvent, index: number) => {
   clickPoint.value.x = event.clientX;
   clickPoint.value.y = event.clientY;
   resizePointIndex.value = index;
+  currentResize.value = {
+    left: position.value.left,
+    top: position.value.top,
+    height: size.value.height,
+    width: size.value.width,
+  };
 };
 </script>
 <template>

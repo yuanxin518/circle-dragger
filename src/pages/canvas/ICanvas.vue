@@ -11,10 +11,10 @@ onMounted(() => {
     console.log("leave");
   });
   dragCanvas.value?.addEventListener("mousemove", (event) => {
-    console.log({
-      offsetX: event.offsetX,
-      offsetY: event.offsetY,
-    });
+    // console.log({
+    //   offsetX: event.offsetX,
+    //   offsetY: event.offsetY,
+    // });
   });
 });
 </script>
