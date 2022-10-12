@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { DragComp } from "@/types/CollectComponent";
-import { nextTick, onMounted, ref, watch, type CSSProperties } from "vue";
+import { onMounted, ref, watch, type CSSProperties } from "vue";
 import { useUniversalAttribute } from "@/components/drag-elements/useAttribute";
 import { useDataControllerStore } from "@/stores/dataController";
 import { useViewControllerStore } from "@/stores/viewController";
@@ -328,6 +328,7 @@ const linePointMouse = (event: MouseEvent, index: number) => {
 }
 .renderedComponent {
   pointer-events: none;
+  overflow: hidden;
 }
 .click_mask {
   position: absolute;
