@@ -13,14 +13,9 @@ import {
 type IRenderedContainer = {
   renderedComponent: DragComp;
 };
+const props = withDefaults(defineProps<IRenderedContainer>(), {});
 
 const renderedComponentInstance = ref(null);
-const props = withDefaults(defineProps<IRenderedContainer>(), {});
-const { viewControllerConfig } = useViewControllerStore();
-const { loadAttribute, cancelLoadAttribute } = useDataControllerStore();
-const states = useComponentEventStates(props);
-const attrs = useUniversalAttribute();
-const { width, height } = viewControllerConfig;
 const renderedContainer = ref<HTMLDivElement | null>(null);
 const currentResize = ref({
   left: 0,
@@ -28,6 +23,12 @@ const currentResize = ref({
   width: 0,
   height: 0,
 });
+
+const { viewControllerConfig } = useViewControllerStore();
+const { loadAttribute, cancelLoadAttribute } = useDataControllerStore();
+const states = useComponentEventStates(props);
+const attrs = useUniversalAttribute();
+const { width, height } = viewControllerConfig;
 
 const {
   containerStyle,
@@ -299,7 +300,7 @@ const linePointMouse = (event: MouseEvent, index: number) => {
   >
     <div class="click_mask" :style="maskStyle">
       <div
-        v-for="(item, index) in 8"
+        v-for="(_, index) in 8"
         :key="index"
         :style="linePoint(index)"
         @mousedown="linePointMouse($event, index)"
@@ -316,7 +317,7 @@ const linePointMouse = (event: MouseEvent, index: number) => {
         height: `${size.height}px`,
       }"
       ref="renderedComponentInstance"
-      class="renderedComponent"
+      class="rendered_component"
     ></component>
   </div>
 </template>
@@ -326,7 +327,7 @@ const linePointMouse = (event: MouseEvent, index: number) => {
   position: absolute;
   user-select: none;
 }
-.renderedComponent {
+.rendered_component {
   pointer-events: none;
   overflow: hidden;
 }
